@@ -10,8 +10,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 0) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_05_093304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.bigint "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_id"], name: "index_categories_on_parent_id"
+  end
+
+  create_table "certifications", force: :cascade do |t|
+    t.string "name"
+    t.date "issued_at"
+    t.date "expires_at"
+    t.bigint "company_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_certifications_on_company_id"
+  end
+
+  create_table "companies", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.string "website"
+    t.text "description"
+    t.string "phone"
+    t.string "email"
+    t.string "logo"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "companies_categories", force: :cascade do |t|
+    t.bigint "company_id", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_companies_categories_on_category_id"
+    t.index ["company_id"], name: "index_companies_categories_on_company_id"
+  end
+
+  add_foreign_key "categories", "categories", column: "parent_id"
+  add_foreign_key "certifications", "companies"
+  add_foreign_key "companies_categories", "categories"
+  add_foreign_key "companies_categories", "companies"
 end
